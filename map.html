@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>地図表示</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+.popup-img { max-width: 100%; height: auto; }
+</style>
+</head>
+<body>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
+<script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-language/v1.0.0/mapbox-gl-language.js'></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" type="text/css">
+
+<div id="map"></div>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiaGF5YXRvaGFuYWJ1c2EiLCJhIjoiY2xueTg1YXM3MGx0ZjJrcWJia2xxN21tOSJ9.fpiAnWbpFCr1jUfOg12GBQ';
+
+        // Mapbox GL JSの地図を作成
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            language: 'ja',
+            center: [0, 0], // 初期中心座標
+            zoom: 14 // 初期ズームレベル
+        });
+
+        // 現在地に赤いマーカーを追加する関数
+        function addMarker(lng, lat) {
+            new mapboxgl.Marker({ color: 'red' })
+                .setLngLat([lng, lat])
+                .addTo(map);
+        }
+    
+        // Geolocation APIを使用して現在位置を取得
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var lng = position.coords.longitude;
+            var lat = position.coords.latitude;
+    
+            // 現在位置を地図の中心に設定
+            map.setCenter([lng, lat]);
+
+            // 現在地に赤いマーカーを追加
+            addMarker(lng, lat);
+
+            //地図のデフォルトの言語を日本語に設定
+            mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js');
+            map.addControl(new MapboxLanguage({
+            defaultLanguage: 'ja'
+            }));
+
+            //マップの大きさを調整できる
+            map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+
+            // Load custom data to supplement the search results.
+            const customData = {
+                'features': [
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営額住宅前駅自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=08HV-t1V6NJWLL6JsOr4jA&cb_client=search.gws-prod.gps&w=408&h=240&yaw=341.57434&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.62030215442545,36.51816661700493],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営光が丘２丁目自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=1IaIXfFSzy5699VykkhuQA&cb_client=search.gws-prod.gps&w=408&h=240&yaw=318.74768&pitch=0&thumbfov=100',  
+                        },
+                        'geometry': {
+                            'coordinates': [136.62442202734212,36.51292400537082],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '道法寺駅自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=n370rbpY4EpFuSV8qLnz1Q&cb_client=search.gws-prod.gps&w=408&h=240&yaw=40.482468&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.61034579487685,36.48311715079412],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '日御子駅自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=ndSLSpDjMx-VeEbJduYZ4A&cb_client=search.gws-prod.gps&w=408&h=240&yaw=5.8982525&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.6154956360227,36.46351565398151],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営馬替駅前自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=-FOAng7Jsj8_bdGLSqYSGA&cb_client=search.gws-prod.gps&w=408&h=240&yaw=212.55676&pitch=0&thumbfov=100',
+              
+                        },
+                        'geometry': {
+                            'coordinates': [136.6230487363699,36.52754724609063],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営上荒屋バス停前自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=Q_Ap27MGTukCzTCtIwfPcw&cb_client=search.gws-prod.gps&w=408&h=240&yaw=159.02516&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.59283633498106,36.55154544118766],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営矢木１丁目自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipO6A6Bu_bwPEczLcPEcfDsqq7GGFv1fHc_mtux7=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.59970278984215,36.55320021455299],
+                            'type': 'Point'
+                        }
+                    },{
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営円光寺バス停前自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=Ht2hthR3V75CWs2pPInX1w&cb_client=search.gws-prod.gps&w=408&h=240&yaw=141.67633&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.64708132838373,36.53278886692908],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '西金沢駅東自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=1w2bhC3Trd-zhBvyW-WO3A&cb_client=search.gws-prod.gps&w=408&h=240&yaw=14.703967&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.62130143256422,36.551820581434846],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '西金沢駅西自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipMdSYwj6pO2n0p7obMxlUTK9WJtxHRJrmaV_ZSi=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.6205693845147,36.55329920925409],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営野町駅前自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=t2PhdDIOBd-YSW-viCwwgQ&cb_client=search.gws-prod.gps&w=408&h=240&yaw=321.1924&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.64460167057342,36.55378004538125],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営若松バス停前自転車駐輪場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=OUef_LVq9xmHQD5hcyoXfg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=146.02908&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.69105507945352,36.55369469393665],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営竪町第２暫定自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipMzIoY4uq-icmNgy0r2NNb4a892-ukzM5ihTePv=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.65373987909305,36.5587457932046],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営片町広場自転車駐輪場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipP3h4TAkFHj1_Ym0tNas9hNDe72vlzUS_myAU2-=w408-h544-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.65076128216847,36.55960976395701],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '片町きらら駐輪場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipPXR_6zS4xDHNdrC65b3l0YUHkSxGFt3Q0kWXeq=w408-h544-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.65208510302386,36.56060664128193],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営柿木畠自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=dtGR9noMWyfQ_3SUUFj7Gg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=80.73382&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.6551464387519,36.56153704851365],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営香林坊自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=fi44eZud2tQELT-7oZunAQ&cb_client=search.gws-prod.gps&w=408&h=240&yaw=138.52258&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.65282975225497,36.56260035734411],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営香林坊地下自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=pvgZphz3wiOBUtjYTYgMcQ&cb_client=search.gws-prod.gps&w=408&h=240&yaw=56.492138&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.65473274473456,36.56299909438247],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '兼六園前駐輪場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipMeuGfEZCJkhjlg4dO1ffMeZznKJPd3beRZLtL8=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.6627584086702,36.563132006271246],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営兼六園下暫定自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipMOwV2SR1zCpVvpZawIffm2bTAEPf7pvPWIi-k8=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.66515493297433,36.56505179923341],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営十間町自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipNR8iH8GLb9zfCOH22nPb37_jxBI9qUhbC1NDau=w426-h240-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.658042296873,36.57150499424728],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営十間町自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipNR8iH8GLb9zfCOH22nPb37_jxBI9qUhbC1NDau=w426-h240-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.65440178952073,36.57283395648704],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営表参道自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipMsHcutHP6CekylKtnAEw3gq3WTeFLPr-HVOgoY=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.65829051328336,36.5746280192338],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢駅東自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipNpHPOQrR-LJER5wckNVQMkBtl1Koeg_nvRLzZ-=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.64754910762937,36.57494114528261],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営本町2丁目自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipOxjbQZIMcXgIMUimMubr7cwZXlmJrWa6Wjummh=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.64999504666707,36.57618610160424],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営此花町自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipPJt9hxa_ce_1oFwPGf3jTIuZlxJz9iZPUHIEA7=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.65091566995133,36.5774004457817],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営金沢駅第2自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipOMNV1QQ4HQY728Sm-3iLjtG16XC8buQVqoPGfP=w426-h240-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.64748244252078,36.57698688534435],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営金沢駅第3自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipPJqEbxS1hD0y8y0TdFSrWlZw4yJMGQaxmUOHXc=w426-h240-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.64731078114923,36.57691795838943],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営金沢駅西暫定自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipN7p7T1FrgxmaJg-oFos7pyBP2WTGLO4Wj0yVHM=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.64593749017703,36.578537725562924],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営金沢駅西広場地下自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipNScVl67hLfUp15pVFUlX9J1LNsEWoxRhU3l65w=w408-h544-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.64688162772043,36.57939929000234],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営金沢駅第1自転車駐車場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipOuWnVLQel2wk79hF3LjViAR_4VNnY1bu78FfHu=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.6488128181501,36.57946821474219],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '金沢市営鳴和バス停前自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=4e5n7LdOSiY3qLbbh-LxVQ&cb_client=search.gws-prod.gps&w=408&h=240&yaw=186.20883&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.67436869704918,36.58832296169437],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '松任駅北口第一自転車駐輪場',
+                            'image': 'https://lh5.googleusercontent.com/p/AF1QipOxQotRkvYUonfA78YmPfBhZC9VWKvDIkBeDuVL=w408-h306-k-no',
+                        },
+                        'geometry': {
+                            'coordinates': [136.56147799460044,36.52954673425721],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '加賀笠間駅前自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=JYB2nyJcnDpUhcVgpuCaKA&cb_client=search.gws-prod.gps&w=408&h=240&yaw=211.35045&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.53473685930393,36.50488941787118],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                      'type': 'Feature',
+                      'properties': {
+                          'title': '加賀笠間駅東口自転車駐車場',
+                          'image': 'https://lh5.googleusercontent.com/p/AF1QipPLArt3UcjLR-YjyrQSnHmbM_o1yuplV5sBT5Ts=w408-h272-k-no',
+                      },
+                      'geometry': {
+                          'coordinates': [136.527429397465,36.50274351586913],
+                          'type': 'Point'
+                      }
+                  },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '美川駅日本海広場自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=nqEBGNqoynYMGhaI2VAr6w&cb_client=search.gws-prod.gps&w=408&h=240&yaw=227.9306&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.49962976482007,36.48772713292],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '小松駅南自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=oUuUz3-Uc0OgK2Zayw2OOg&cb_client=search.gws-prod.gps&w=408&h=240&yaw=87.0756&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.45705003507948,36.40165357846229],
+                            'type': 'Point'
+                        }
+                    },
+                    {
+                        'type': 'Feature',
+                        'properties': {
+                            'title': '小松駅北自転車駐車場',
+                            'image': 'https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid=-InlHLdkPTPRuZnQrV4b-A&cb_client=search.gws-prod.gps&w=408&h=240&yaw=134.25858&pitch=0&thumbfov=100',
+                        },
+                        'geometry': {
+                            'coordinates': [136.45196083535026,36.40374936457929],
+                            'type': 'Point'
+                        }
+                    },
+              
+                ],
+                'type': 'FeatureCollection'
+              };
+
+            function forwardGeocoder(query) {
+                const matchingFeatures = [];
+                for (const feature of customData.features) {
+                    if (
+                        feature.properties.title
+                            .toLowerCase()
+                            .includes(query.toLowerCase())
+                    ) {
+                        feature['place_name'] = `🚲 ${feature.properties.title}`;
+                        feature['center'] = feature.geometry.coordinates;
+                        feature['place_type'] = ['park'];
+                        matchingFeatures.push(feature);
+                    }
+                }
+                return matchingFeatures;
+            }
+
+            // マーカーを地図に追加
+            customData.features.forEach(feature => {
+                const el = document.createElement('div');
+                el.className = 'marker';
+        
+                new mapboxgl.Marker(el)
+                .setLngLat(feature.geometry.coordinates)
+                .setPopup(new mapboxgl.Popup({ offset: 25 }) // クリックしたときのポップアップ設定
+                    .setHTML(`
+                    <h3>${feature.properties.title}</h3>
+                    <img class="popup-img" src="${feature.properties.image}" alt="Image">
+                    `)
+                )
+                .addTo(map);
+            });
+        
+            // マーカーに関連するCSSスタイル
+            map.on('load', () => {
+                map.addSource('markers', {
+                type: 'geojson',
+                data: {
+                    type: 'FeatureCollection',
+                    features: customData.features
+                }
+                });
+        
+                map.addLayer({
+                id: 'markers',
+                type: 'symbol',
+                source: 'markers',
+                layout: {
+                    'icon-image': 'custom-marker',
+                    'icon-allow-overlap': true
+                }
+                });
+        
+                map.loadImage(
+                'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+                (error, image) => {
+                    if (error) throw error;
+                    map.addImage('custom-marker', image);
+                }
+                );
+            });
+        
+            // マーカーがクリックされたときの処理
+            map.on('click', 'markers', (e) => {
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                const title = e.features[0].properties.title;
+        
+                // ポップアップを表示
+                new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(`
+                <h3>${title}</h3>
+                <p>緯度: ${coordinates[1]}<br>経度: ${coordinates[0]}</p>
+                <img class="popup-img" src="${e.features[0].properties.image}" alt="Image">
+                `)
+                .addTo(map);
+            });
+        
+            // カーソルがポイントになったときの処理
+            map.on('mouseenter', 'markers', () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+        
+            // カーソルがポイントから外れたときの処理
+            map.on('mouseleave', 'markers', () => {
+                map.getCanvas().style.cursor = '';
+            });
+
+            //ルート検索ができる
+            map.addControl(
+                new MapboxDirections({
+                accessToken: mapboxgl.accessToken,
+                unit: 'metric',
+                language: 'ja',
+                profile: 'mapbox/cycling',
+                alternatives: true,
+                }),
+                'bottom-left'
+                );
+
+            // Add the control to the map.
+            map.addControl(
+                new MapboxGeocoder({
+                    accessToken: mapboxgl.accessToken,
+                    localGeocoder: forwardGeocoder,
+                    zoom: 14,
+                    placeholder: '駐輪場が検索できる',
+                    mapboxgl: mapboxgl
+                })
+            );
+
+            //現在地を表示する
+            map.addControl(
+                new mapboxgl.GeolocateControl({
+                    positionOptions: {
+                        enableHighAccuracy: true
+                    },
+                    trackUserLocation: true,
+                    showUserHeading: true
+                })
+            );
+                }, function (error) {
+                    console.error('Error getting geolocation:', error);
+                });
+</script>
+
+</body>
+</html>
